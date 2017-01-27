@@ -1,10 +1,13 @@
-FROM node:6
-MAINTAINER 3846masa
+FROM node:alpine
+MAINTAINER ffxblue
 
 WORKDIR /usr/src/app
 
 COPY package.json package.json
-RUN npm i
+RUN apk add --no-cache --virtual .build-deps \
+    make gcc g++ python && \
+    npm i && \
+    apk del .build-deps
 COPY . .
 
 EXPOSE 25

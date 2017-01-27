@@ -1,4 +1,0 @@
-slack:
-  token: SLACK_TOKEN
-prefix_regexp: PREFIX_REGEXP
-

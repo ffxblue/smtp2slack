@@ -1,52 +1,39 @@
-'use strict'
+'use strict';
 
-const mailin = require('mailin')
-const Slack = require('@slack/client')
-const config = require('config')
+const mailin = require('mailin');
+const WebClient = require('@slack/client').WebClient;
 
-const slack = new Slack.WebClient(config.get('slack.token'))
-const prefixRegexp =
-  new RegExp(`^${ config.get('prefix_regexp') }`)
+const slack = new WebClient(process.env.SLACK_TOKEN);
+const channel = `#${process.env.CHANNEL}`;
 
 mailin.start({
   port: 25,
   disableWebhook: true
-})
+});
 
 mailin.on('authorizeUser', () => {
   done(new Error('Unauthorized'), false)
-})
+});
 
 mailin.on('message', (conn, msg) => {
-  console.dir(msg, { depth: null })
+  console.dir(msg, { depth: null });
 
-  const hasPrefix =
-    msg.envelopeTo.some((i) => i.address.match(prefixRegexp))
-  if (!hasPrefix) return false
-
-  const sentConfs =
-    msg.envelopeTo.map((i) => {
-      const local =
-        i.address.split('@')[0].replace(prefixRegexp, '')
-      const [ channel, icon ] = local.split('+')
-      return { channel, icon }
-    })
-
-  const postDataDefault = {
+  const postData = {
     username: 'Mailbot',
     icon_emoji: ':email:',
     attachments: [{
+      title: `Subject: ${msg.subject}`,
       fallback: msg.subject,
-      title: msg.subject,
-      author_name: msg.from[0].address,
-      text: msg.text
+      author_name: `To: ${msg.envelopeTo[0].address}`,
+      text: msg.text,
+      footer: `From: ${msg.from[0].address}`
     }]
-  }
+  };
 
-  sentConfs.forEach((conf) => {
-    const postData = Object.assign({}, postDataDefault, {
-      icon_emoji: (conf.icon) ? `:${ conf.icon }:` : ':email:'
-    })
-    slack.chat.postMessage(`#${ conf.channel }`, '', postData)
-  })
-})
+  slack.chat.postMessage(channel, '', postData, function(err, res) {
+    if (err) {
+        console.error('Error:', err);
+    }
+  });
+
+});
