@@ -1,5 +1,6 @@
 main:
-  build: .
+  # build: .
+  image: ffxblue/smtp2slack
   ports:
     - "25:25"
   restart: always
