@@ -4,7 +4,7 @@ const mailin = require('mailin');
 const WebClient = require('@slack/client').WebClient;
 
 const slack = new WebClient(process.env.SLACK_TOKEN);
-const channel = `#${process.env.CHANNEL}`;
+const channel = `#${process.env.SLACK_CHANNEL}`;
 
 mailin.start({
   port: 25,
