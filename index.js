@@ -5,6 +5,7 @@ const WebClient = require('@slack/client').WebClient;
 
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channel = `#${process.env.SLACK_CHANNEL}`;
+const email_suffixes = process.env.EMAIL_SUFFIXES.split(/,\s*|\s+/)
 
 mailin.start({
   port: 25,
@@ -29,11 +30,23 @@ mailin.on('message', (conn, msg) => {
       footer: `From: ${msg.from[0].address}`
     }]
   };
-
-  slack.chat.postMessage(channel, '', postData, function(err, res) {
-    if (err) {
-        console.error('Error:', err);
+  var approved = false;
+  if (email_suffixes) {
+    if (email_suffixes.includes(msg.envelopeTo[0].address.split('@')[1])) {
+      approved = true;
+    } else {
+      approved = false;
     }
-  });
+  } else {
+    approved = true;
+  }
+
+  if (approved) {
+    slack.chat.postMessage(channel, '', postData, function(err, res) {
+      if (err) {
+          console.error('Error:', err);
+      }
+    });
+  }
 
 });

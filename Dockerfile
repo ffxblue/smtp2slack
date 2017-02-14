@@ -1,5 +1,5 @@
 FROM node:alpine
-MAINTAINER ffxblue
+MAINTAINER dockerhub@ffxblue.com.au
 
 WORKDIR /usr/src/app
 
