@@ -1,29 +1,27 @@
 SMTP2SLACK
 ==========
 
-Inspired by [SRARAD/slack-email].
+Based upon smtp2slack, by 3846masa.
 
-[SRARAD/slack-email]: https://github.com/SRARAD/slack-email
+Almost fully rewritten to send email to a single slack channel.
 
 ## Usage
 
 1. Set MX record
 1. Install docker-compose
 1. Edit ``SLACK_TOKEN`` in docker-compose.yml
+1. Set the ``SLACK_CHANNEL`` to send the mail to.
 1. ``docker-compose up -d``
-1. Forward an email to ``channelname@yourdomain.example.com``
+1. Forward an email to ``any_address@example.com``
 
-## Prefix
+## Email Suffixes
 
-If you set ``PREFIX_REGEXP``, mail address will be tested.
+If you set ``EMAIL_SUFFIXES``, mail addresses will be tested before delivering to the slack channel. This variable should be a comma-separated list of domains to accept.
 
-For example, you will set ``slack-``, the address accepted is ``slack-channelname@yourdomain.example.com``.
-
-## Bot icon
-
-For example, you will set ``:slack:`` icon to bot, you forward to ``channelname+slack@yourdomain.example.com``.
-
-If you don't set icon name, bot talk with ``:email:`` icon.
+For example, if you set ``example.com``, the addresses accepted are in the form ``<some_address>@example.com`` - all others are silently discarded.
 
 ## LICENSE
+
+(c) 2017 Fairfax Media Ltd - MIT Licence
+
 (c) 3846masa MIT
