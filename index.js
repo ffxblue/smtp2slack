@@ -2,10 +2,13 @@
 
 const mailin = require('mailin');
 const WebClient = require('@slack/client').WebClient;
+let email_suffixes;
 
 const slack = new WebClient(process.env.SLACK_TOKEN);
 const channel = `#${process.env.SLACK_CHANNEL}`;
-const email_suffixes = process.env.EMAIL_SUFFIXES.split(/,\s*|\s+/)
+if (process.env.EMAIL_SUFFIXES) {
+  email_suffixes = process.env.EMAIL_SUFFIXES.split(/,\s*|\s+/)
+}
 
 mailin.start({
   port: 25,
@@ -31,7 +34,7 @@ mailin.on('message', (conn, msg) => {
     }]
   };
   var approved = false;
-  if (email_suffixes) {
+  if (process.env.EMAIL_SUFFIXES) {
     if (email_suffixes.includes(msg.envelopeTo[0].address.split('@')[1])) {
       approved = true;
     } else {
